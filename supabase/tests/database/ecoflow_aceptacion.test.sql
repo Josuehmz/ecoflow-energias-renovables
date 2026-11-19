@@ -1,6 +1,6 @@
 -- =====================================================================
 -- EcoFlow · pruebas de aceptación de la base (pgTAP)
--- Fuente: docs/ESPECIFICACION-TECNICA.md §6 (CA-01 … CA-17). Escritas ANTES que el SQL del esquema:
+-- Fuente: docs/ESPECIFICACION-TECNICA.md §6 (CA-01 … CA-17; 65 pruebas). Escritas ANTES que el SQL del esquema:
 -- son el criterio con el que se evaluó cada versión que propuso la IA (docs/PROMPTS.md).
 -- Correr:  supabase db reset && supabase test db
 --
@@ -15,7 +15,7 @@
 -- =====================================================================
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(64);
+select plan(65);
 
 -- Ayuda: ¿la columna es la primera de algún índice de la tabla?
 create function pg_temp.tiene_indice(tabla regclass, columna name) returns boolean
@@ -95,6 +95,12 @@ select ok(pg_temp.tiene_indice('public.proyectos', 'instalador_id'), '§2.6 índ
 select ok(pg_temp.tiene_indice('public.proyectos', 'created_by'), '§2.6 índice en proyectos.created_by');
 select ok(pg_temp.tiene_indice('public.proyectos', 'estado'), '§2.6 índice en proyectos.estado');
 select ok(pg_temp.tiene_indice('public.proyecto_materiales', 'material_id'), '§2.6 índice en proyecto_materiales.material_id');
+
+-- Añadida tras revisar v1 a mano (las 64 pruebas originales no lo cubrían): la semilla corre como
+-- postgres, sin sesión de usuario; T-4 la trata como coordinador y debe conservar su created_by.
+select is(
+  (select count(*)::int from public.proyectos where created_by is null), 0,
+  'I-3/T-4 los proyectos de la semilla (rol postgres, sin sesión) conservan created_by');
 
 -- ---------------------------------------------------------------------
 -- anon (CA-02)
