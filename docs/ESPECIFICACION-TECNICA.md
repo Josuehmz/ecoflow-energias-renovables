@@ -76,7 +76,10 @@ Invariantes adicionales:
 - **I-1.** Un proyecto en `en_progreso` o `completado` tiene instalador (CHECK).
 - **I-2.** Solo se asigna a personal **activo** con rol `instalador` (trigger, porque un CHECK no
   puede mirar otra tabla).
-- **I-3.** `created_by` no se acepta del cliente: el valor por defecto es el instalador de la sesión.
+- **I-3.** `created_by` no se acepta del cliente: `authenticated` **no tiene privilegio** de INSERT
+  ni de UPDATE sobre esa columna (grants por columna), así que intentarlo da `42501`; el valor por
+  defecto es el instalador de la sesión. Un rol sin sesión de usuario (`postgres`, `service_role`:
+  la semilla o el Studio) sí puede fijarlo, y la base no se lo reescribe.
 
 ### 2.4 `materiales` — catálogo
 
@@ -228,3 +231,4 @@ Registro público, recuperación de contraseña, subida de archivos, tiempo real
 |---|---|---|
 | 1.0 | Versión inicial, antes del código | — |
 | 1.1 | Códigos SQLSTATE de cada error (§4) y reparto exacto de la semilla (§7) | Las pruebas de aceptación se escribieron antes que el SQL y necesitaban un contrato comprobable |
+| 1.2 | I-3 precisado: grants por columna en vez de «sobrescribir en silencio», y la semilla conserva su `created_by` | La v1 de la IA leyó «no se acepta» como «se ignora»: concedió INSERT sobre la columna y el trigger la pisaba, incluso en la semilla (9 de 9 en NULL). Ver `bitacora/v1-esquema/verificacion.txt` |
