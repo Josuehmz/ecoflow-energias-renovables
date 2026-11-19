@@ -1,0 +1,12 @@
+Fecha: 2026-11-18 22:33:56 -0500
+CLI: supabase 2.122.0
+Comando: supabase test db --agent no
+----
+Connecting to local database...
+psql:<usuario>/OneDrive/Documentos/Repositorios/universidad/ecoflow-energias-renovables/supabase/tests/database/ecoflow_aceptacion.test.sql:17: NOTICE:  extension "pgtap" already exists, skipping
+<usuario>/OneDrive/Documentos/Repositorios/universidad/ecoflow-energias-renovables/supabase/tests/database/ecoflow_aceptacion.test.sql .. ok
+All tests successful.
+Files=1, Tests=66,  2 wallclock secs ( 0.18 usr  0.12 sys +  0.03 cusr  0.13 csys =  0.46 CPU)
+Result: PASS
+----
+(código de salida: 0)

@@ -1,0 +1,45 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["react", "typescript", "oxc", "jsx-a11y"],
+  "rules": {
+    "react/rules-of-hooks": "error",
+    "react/exhaustive-deps": "error",
+    "typescript/no-explicit-any": "error"
+  },
+  "ignorePatterns": ["bitacora/**", "dist/**", "herramientas/**", "src/types/database.types.ts"],
+  "overrides": [
+    {
+      "files": ["src/components/**", "src/features/*/components/**", "src/App.tsx"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              { "name": "@supabase/supabase-js", "message": "Arquitectura: la UI no usa Supabase; usa un hook de features/*/hooks." }
+            ],
+            "patterns": [
+              { "group": ["**/lib/supabase", "@/lib/supabase"], "message": "Arquitectura: la UI no usa el cliente de Supabase; usa un hook." },
+              { "group": ["**/services/**", "@/services/**"], "message": "Arquitectura: la UI no llama servicios; usa un hook." }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/features/*/hooks/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              { "name": "@supabase/supabase-js", "message": "Arquitectura: los hooks hablan con src/services, no con supabase-js." }
+            ],
+            "patterns": [
+              { "group": ["**/lib/supabase", "@/lib/supabase"], "message": "Arquitectura: los hooks usan src/services, no el cliente." }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
