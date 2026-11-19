@@ -9,7 +9,7 @@ function texto(campo: string, min: number, max: number) {
   return z
     .string()
     .trim()
-    .min(min, `${campo} debe tener al menos ${min} caracteres.`)
+    .min(min, { error: `${campo} debe tener al menos ${min} caracteres.`, abort: true })
     .max(max, `${campo} no puede pasar de ${max} caracteres.`)
 }
 
@@ -30,8 +30,9 @@ export const proyectoSchema = z
     capacidad_kwp: z
       .string()
       .trim()
-      .min(1, 'Escribe la capacidad en kWp.')
-      .regex(/^\d+([.,]\d{1,2})?$/, 'La capacidad es un número con máximo 2 decimales.')
+      // abort: el primer fallo corta las demás comprobaciones del campo (un mensaje por campo).
+      .min(1, { error: 'Escribe la capacidad en kWp.', abort: true })
+      .regex(/^\d+([.,]\d{1,2})?$/, { error: 'La capacidad es un número con máximo 2 decimales.', abort: true })
       .transform((valor) => Number(valor.replace(',', '.')))
       .pipe(
         z
@@ -42,8 +43,8 @@ export const proyectoSchema = z
     numero_paneles: z
       .string()
       .trim()
-      .min(1, 'Escribe el número de paneles.')
-      .regex(/^\d+$/, 'El número de paneles es un entero.')
+      .min(1, { error: 'Escribe el número de paneles.', abort: true })
+      .regex(/^\d+$/, { error: 'El número de paneles es un entero.', abort: true })
       .transform(Number)
       .pipe(
         z
