@@ -18,6 +18,7 @@ const MD = join(RAIZ, 'docs', 'ARQUITECTURA.md')
 const IMG = join(RAIZ, 'docs', 'img')
 const PDF = join(RAIZ, 'docs', 'ARQUITECTURA.pdf')
 const MERMAID = join(RAIZ, 'node_modules', 'mermaid', 'dist', 'mermaid.min.js')
+const REPO_BLOB = 'https://github.com/Josuehmz/ecoflow-energias-renovables/blob/main'
 
 const fuente = readFileSync(MD, 'utf8').replace(/\r\n/g, '\n')
 const bloques = [...fuente.matchAll(/```mermaid\n([\s\S]*?)```/g)].map((m, i) => ({
@@ -63,6 +64,14 @@ const markdown = fuente.replace(/```mermaid\n[\s\S]*?```/g, () => {
   return `<p class="diagrama"><img src="img/diagrama-${n}.png" alt="Diagrama ${n}"></p>`
 })
 const cuerpo = marked.parse(markdown)
+  // Los enlaces relativos del Markdown (../src/..., PROMPTS.md#...) se resolverían contra el archivo
+  // temporal y quedarían en el PDF como file:///<carpeta del usuario>/...: rotos para el lector y con
+  // una ruta personal. Se reescriben a la vista del archivo en GitHub; las imágenes siguen locales.
+  .replace(/<a href="(?![a-z][a-z0-9+.-]*:|#)([^"]+)"/gi, (_, destino) => {
+    const [ruta, ancla] = destino.split('#')
+    const url = new URL(ruta, `${REPO_BLOB}/docs/`).href
+    return `<a href="${url}${ancla ? `#${ancla}` : ''}"`
+  })
 const html = `<!doctype html><html lang="es"><head><meta charset="utf-8">
 <style>
   @page { size: A4; margin: 18mm 16mm 20mm; }
