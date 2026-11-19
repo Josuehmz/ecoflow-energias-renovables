@@ -217,17 +217,17 @@ select results_eq(
   $$values ('pendiente', 3), ('en_progreso', 2), ('completado', 4)$$,
   'CA-14 el resumen de la coordinadora cuenta todo');
 select lives_ok(
-  $$insert into public.proyectos (id, nombre, cliente, direccion, ciudad, capacidad_kwp, numero_paneles,
+  $$insert into public.proyectos (nombre, cliente, direccion, ciudad, capacidad_kwp, numero_paneles,
                                   fecha_inicio, fecha_fin, instalador_id)
-    values ('c0000000-0000-4000-8000-0000000000aa', 'Parqueadero Solar Centro', 'Alcaldía de Prueba',
+    values ('Parqueadero Solar Centro', 'Alcaldía de Prueba',
             'Carrera 1 # 1-1', 'Bogotá', 40, 90, '2027-03-01', '2027-04-01',
             'b2222222-2222-4222-8222-222222222222')$$,
   'CA-10 la coordinadora crea un proyecto asignado a A');
 select is(
-  (select created_by::text from public.proyectos where id = 'c0000000-0000-4000-8000-0000000000aa'),
+  (select created_by::text from public.proyectos where nombre = 'Parqueadero Solar Centro'),
   'b1111111-1111-4111-8111-111111111111', 'CA-10 created_by lo puso la base (la coordinadora)');
 select is(
-  (select estado::text from public.proyectos where id = 'c0000000-0000-4000-8000-0000000000aa'),
+  (select estado::text from public.proyectos where nombre = 'Parqueadero Solar Centro'),
   'pendiente', '§2.3 un proyecto nuevo nace pendiente');
 select throws_ok(
   $$insert into public.proyectos (nombre, cliente, direccion, ciudad, capacidad_kwp, numero_paneles, fecha_inicio, created_by)

@@ -80,6 +80,8 @@ Invariantes adicionales:
   ni de UPDATE sobre esa columna (grants por columna), así que intentarlo da `42501`; el valor por
   defecto es el instalador de la sesión. Un rol sin sesión de usuario (`postgres`, `service_role`:
   la semilla o el Studio) sí puede fijarlo, y la base no se lo reescribe.
+- **I-4.** `id`, `created_at` y `updated_at` también los pone la base en las cuatro tablas: el
+  cliente no tiene privilegio para escribirlos (el `id` sale de `gen_random_uuid()`).
 
 ### 2.4 `materiales` — catálogo
 
@@ -232,3 +234,4 @@ Registro público, recuperación de contraseña, subida de archivos, tiempo real
 | 1.0 | Versión inicial, antes del código | — |
 | 1.1 | Códigos SQLSTATE de cada error (§4) y reparto exacto de la semilla (§7) | Las pruebas de aceptación se escribieron antes que el SQL y necesitaban un contrato comprobable |
 | 1.2 | I-3 precisado: grants por columna en vez de «sobrescribir en silencio», y la semilla conserva su `created_by` | La v1 de la IA leyó «no se acepta» como «se ignora»: concedió INSERT sobre la columna y el trigger la pisaba, incluso en la semilla (9 de 9 en NULL). Ver `bitacora/v1-esquema/verificacion.txt` |
+| 1.3 | I-4: el cliente tampoco escribe `id`, `created_at` ni `updated_at` | Lo pedía el prompt 02 y la v2 lo cumplió, pero la prueba 43 insertaba un `id` fijo: el contrato no lo decía y se escribe aquí. La prueba se ajustó (busca por nombre) |
