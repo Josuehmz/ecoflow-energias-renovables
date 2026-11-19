@@ -1,0 +1,7 @@
+Fecha: 2026-11-18 21:40:37 -0500
+CLI: supabase 2.122.0
+Comando: supabase init --agent no
+----
+Finished supabase init.
+----
+(código de salida: 0)

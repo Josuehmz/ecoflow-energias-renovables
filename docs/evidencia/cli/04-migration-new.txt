@@ -1,0 +1,7 @@
+Fecha: 2026-11-18 21:50:10 -0500
+CLI: supabase 2.122.0
+Comando: supabase migration new esquema_ecoflow --agent no
+----
+Created new migration at supabase\migrations\20261119025015_esquema_ecoflow.sql
+----
+(código de salida: 0)

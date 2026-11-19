@@ -150,6 +150,17 @@ pendiente ──► en_progreso ──► completado
 - **T-5.** El mensaje de error dice qué transición se intentó y por qué no se permite, para mostrarlo
   tal cual en la interfaz.
 
+Códigos de error que la base debe devolver (las pruebas los comprueban):
+
+| Situación | SQLSTATE | Mensaje empieza por |
+|---|---|---|
+| Transición no permitida (T-2, T-3) | `P0001` | `Transición no permitida` |
+| Asignación a personal inactivo o a un coordinador (I-2) | `P0001` | `Asignación no válida` |
+| Un no coordinador cambia una columna distinta de `estado` | `42501` | `Solo un coordinador` |
+| Sin privilegio o fila nueva fuera de la política | `42501` | (mensaje de PostgreSQL) |
+| CHECK violado | `23514` | (mensaje de PostgreSQL) |
+| FK violada (RESTRICT) | `23503` | (mensaje de PostgreSQL) |
+
 ## 5. Frontend (contrato)
 
 - Vite + React 19 + TypeScript estricto (`strict`, `noUncheckedIndexedAccess`,
@@ -200,9 +211,10 @@ Cada criterio tiene una prueba automática que lo demuestra.
 
 ## 7. Datos de prueba (semilla)
 
-Un coordinador, dos instaladores activos (A y B) y uno inactivo; proyectos en los tres estados
-repartidos entre A y B (y uno pendiente sin asignar); seis materiales; consumos de material en varios
-proyectos. Los usuarios se crean en `auth.users` e `auth.identities` desde `seed.sql`, con UUID fijos
+Un coordinador, dos instaladores activos (A y B) y uno inactivo; nueve proyectos: A tiene uno en
+cada estado, B tiene dos pendientes, uno en progreso y uno completado, uno pendiente sin asignar y uno
+completado del instalador que hoy está inactivo (historia que no se borra); seis materiales; consumos
+de material en cinco proyectos (8 filas visibles para A, 5 para B, 14 en total). Los usuarios se crean en `auth.users` e `auth.identities` desde `seed.sql`, con UUID fijos
 para que todo sea reproducible con `supabase db reset`.
 
 ## 8. Fuera de alcance
@@ -215,3 +227,4 @@ Registro público, recuperación de contraseña, subida de archivos, tiempo real
 | Versión | Cambio | Motivo |
 |---|---|---|
 | 1.0 | Versión inicial, antes del código | — |
+| 1.1 | Códigos SQLSTATE de cada error (§4) y reparto exacto de la semilla (§7) | Las pruebas de aceptación se escribieron antes que el SQL y necesitaban un contrato comprobable |

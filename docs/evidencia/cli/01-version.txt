@@ -1,0 +1,7 @@
+Fecha: 2026-11-18 21:40:33 -0500
+CLI: supabase 2.122.0
+Comando: supabase --version --agent no
+----
+2.122.0
+----
+(código de salida: 0)
