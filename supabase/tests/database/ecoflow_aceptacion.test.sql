@@ -27,6 +27,20 @@ language sql as $$
   )
 $$;
 
+-- Ayuda: cuántas filas tocó un UPDATE/DELETE. Es security INVOKER, así que la RLS de quien la llama
+-- se aplica. (Un CTE con UPDATE dentro de una subconsulta no está permitido en PostgreSQL.)
+create schema pruebas;
+grant usage on schema pruebas to authenticated;
+create function pruebas.filas(sentencia text) returns int
+language plpgsql as $$
+declare n int;
+begin
+  execute sentencia;
+  get diagnostics n = row_count;
+  return n;
+end $$;
+grant execute on function pruebas.filas(text) to authenticated;
+
 -- ---------------------------------------------------------------------
 -- Estructura (CA-01, CA-02, CA-12, CA-16, índices §2.6)
 -- ---------------------------------------------------------------------
@@ -63,17 +77,18 @@ select is(
       and exists (select 1 from unnest(p.proconfig) c where c like 'search_path=%')),
   2, 'CA-16 es_coordinador() y mi_instalador_id() son security definer con search_path fijo');
 
-select results_eq(
-  $$select conrelid::regclass::text || '.' || a.attname || ' ' || c.confdeltype
+-- (string_agg y no results_eq: results_eq sobre columnas de catálogo falla con
+--  «could not determine which collation to use», un defecto de la prueba que se vio en v1.)
+select is(
+  (select string_agg(format('%s.%s %s', c.conrelid::regclass, a.attname, c.confdeltype), ', '
+                     order by c.conrelid::regclass::text, a.attname::text)
       from pg_constraint c
       join pg_attribute a on a.attrelid = c.conrelid and a.attnum = c.conkey[1]
      where c.contype = 'f'
        and c.conrelid in ('public.instaladores'::regclass, 'public.proyectos'::regclass,
-                          'public.proyecto_materiales'::regclass)
-     order by 1$$,
-  $$values ('instaladores.user_id c'), ('proyecto_materiales.material_id r'),
-           ('proyecto_materiales.proyecto_id c'), ('proyectos.created_by n'),
-           ('proyectos.instalador_id r')$$,
+                          'public.proyecto_materiales'::regclass)),
+  'instaladores.user_id c, proyecto_materiales.material_id r, proyecto_materiales.proyecto_id c, '
+  || 'proyectos.created_by n, proyectos.instalador_id r',
   'CA-12 cada FK tiene el ON DELETE de la especificación (c=cascade, r=restrict, n=set null)');
 
 select ok(pg_temp.tiene_indice('public.proyectos', 'instalador_id'), '§2.6 índice en proyectos.instalador_id');
@@ -105,17 +120,14 @@ select is_empty(
   $$select 1 from public.proyectos where id = 'c0000000-0000-4000-8000-000000000004'$$,
   'CA-03 A no ve el proyecto 4 de B ni pidiéndolo por id');
 select is(
-  (with u as (update public.proyectos set estado = 'completado'
-               where id = 'c0000000-0000-4000-8000-000000000004' returning 1)
-   select count(*)::int from u),
+  pruebas.filas($$update public.proyectos set estado = 'completado'
+                   where id = 'c0000000-0000-4000-8000-000000000004'$$),
   0, 'CA-04 A no modifica el proyecto de B (0 filas)');
 select is(
-  (with d as (delete from public.proyectos where id = 'c0000000-0000-4000-8000-000000000004' returning 1)
-   select count(*)::int from d),
+  pruebas.filas($$delete from public.proyectos where id = 'c0000000-0000-4000-8000-000000000004'$$),
   0, 'CA-04 A no borra el proyecto de B (0 filas)');
 select is(
-  (with d as (delete from public.proyectos where id = 'c0000000-0000-4000-8000-000000000003' returning 1)
-   select count(*)::int from d),
+  pruebas.filas($$delete from public.proyectos where id = 'c0000000-0000-4000-8000-000000000003'$$),
   0, 'CA-04 A tampoco borra su propio proyecto (borrar es del coordinador)');
 select lives_ok(
   $$update public.proyectos set estado = 'en_progreso' where id = 'c0000000-0000-4000-8000-000000000003'$$,
@@ -150,16 +162,15 @@ select throws_ok(
 select is((select count(*)::int from public.materiales), 6, '§3 A lee todo el catálogo de materiales');
 select is((select count(*)::int from public.instaladores), 1, '§3 A solo ve su propia fila de instaladores');
 select is(
-  (with u as (update public.instaladores set rol = 'coordinador'
-               where id = 'b2222222-2222-4222-8222-222222222222' returning 1)
-   select count(*)::int from u),
+  pruebas.filas($$update public.instaladores set rol = 'coordinador'
+                   where id = 'b2222222-2222-4222-8222-222222222222'$$),
   0, '§3 A no puede ascenderse a coordinador (0 filas)');
 select is((select count(*)::int from public.proyecto_materiales), 8, 'CA-13 A ve solo los 8 consumos de sus proyectos');
 select is_empty(
   $$select 1 from public.proyecto_materiales where proyecto_id = 'c0000000-0000-4000-8000-000000000004'$$,
   'CA-13 A no ve los materiales del proyecto 4 de B');
 select results_eq(
-  'select estado::text, total::int from public.resumen_proyectos_por_estado order by estado',
+  'select r.estado::text, r.total::int from public.resumen_proyectos_por_estado r order by r.estado',
   $$values ('pendiente', 0), ('en_progreso', 2), ('completado', 1)$$,
   'CA-14 el resumen de A cuenta solo lo suyo y trae el estado con 0');
 reset role;
@@ -181,7 +192,7 @@ select lives_ok(
   $$update public.proyectos set estado = 'completado' where id = 'c0000000-0000-4000-8000-000000000004'$$,
   'CA-05 B termina su proyecto 4 (en_progreso → completado)');
 select results_eq(
-  'select estado::text, total::int from public.resumen_proyectos_por_estado order by estado',
+  'select r.estado::text, r.total::int from public.resumen_proyectos_por_estado r order by r.estado',
   $$values ('pendiente', 2), ('en_progreso', 0), ('completado', 2)$$,
   'CA-14 el resumen de B cuenta solo lo suyo');
 reset role;
@@ -196,7 +207,7 @@ select is((select count(*)::int from public.proyectos), 9, 'CA-10 la coordinador
 select is((select count(*)::int from public.proyecto_materiales), 14, 'CA-13 la coordinadora ve los 14 consumos');
 select is((select count(*)::int from public.instaladores), 4, '§3 la coordinadora ve a todo el personal');
 select results_eq(
-  'select estado::text, total::int from public.resumen_proyectos_por_estado order by estado',
+  'select r.estado::text, r.total::int from public.resumen_proyectos_por_estado r order by r.estado',
   $$values ('pendiente', 3), ('en_progreso', 2), ('completado', 4)$$,
   'CA-14 el resumen de la coordinadora cuenta todo');
 select lives_ok(
@@ -277,7 +288,7 @@ set local role authenticated;
 set local request.jwt.claims = '{"sub": "a4444444-4444-4444-8444-444444444444", "role": "authenticated"}';
 select is((select count(*)::int from public.proyectos), 0, 'S-4 el inactivo no ve proyectos, ni su historia');
 select results_eq(
-  'select estado::text, total::int from public.resumen_proyectos_por_estado order by estado',
+  'select r.estado::text, r.total::int from public.resumen_proyectos_por_estado r order by r.estado',
   $$values ('pendiente', 0), ('en_progreso', 0), ('completado', 0)$$,
   'CA-14 el resumen trae los 3 estados aunque todos estén en 0');
 reset role;

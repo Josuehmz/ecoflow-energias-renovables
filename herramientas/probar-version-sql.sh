@@ -22,7 +22,7 @@ limpiar() { sed -E -e 's/\x1b\[[0-9;]*[A-Za-z]//g' \
   -e 's/sb_(publishable|secret)_[A-Za-z0-9_-]+/<redactado>/g' \
   -e 's/eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+/<redactado>/g' \
   -e 's#(postgres(ql)?://[^:]+:)[^@]+@#\1<redactado>@#g' \
-  -e 's#[A-Za-z]:[\\/]Users[\\/][^\\/ ]+#<usuario>#g'; }
+  -e 's#([A-Z]:)?[\\/]Users[\\/][^\\/ ]+#<usuario>#g'; }
 {
   echo "Fecha: $(date '+%Y-%m-%d %H:%M:%S %z')"
   echo "Versión probada: $DIR  →  $MIG"
