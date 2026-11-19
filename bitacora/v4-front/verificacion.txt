@@ -1,0 +1,75 @@
+Fecha: 2026-11-18 22:57:13 -0500
+Versión verificada: bitacora/v4-front
+
+### $ pnpm typecheck
+$ tsc -b --noEmit
+(código de salida: 0)
+
+### $ pnpm lint
+$ oxlint --deny-warnings
+src/components/PantallaCarga.tsx:5:96: warning jsx-a11y(prefer-tag-over-role): Prefer `output` over `role` attribute `status`. help: Replace HTML elements with `role` attribute `status` to corresponding semantic HTML tag `output`.
+[ELIFECYCLE] Command failed with exit code 1.
+(código de salida: 1)
+
+### $ pnpm test
+$ vitest run
+
+ RUN  v5.1.0 <usuario>/OneDrive/Documentos/Repositorios/universidad/ecoflow-energias-renovables
+
+ ❯ src/features/proyectos/hooks/useCrearProyecto.test.tsx (2 tests | 1 failed) 154ms
+   ❯ useCrearProyecto (2)
+     × guarda el mensaje del error de la base y no avisa 18ms
+ ❯ src/features/proyectos/proyectoSchema.test.ts (6 tests | 1 failed) 77ms
+   ❯ proyectoSchema (6)
+     × rechaza capacidad 0, con 3 decimales o vacía (CHECK capacidad_kwp > 0, numeric(8,2)) 35ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/proyectos/proyectoSchema.test.ts > proyectoSchema > rechaza capacidad 0, con 3 decimales o vacía (CHECK capacidad_kwp > 0, numeric(8,2))
+AssertionError: expected 'La capacidad es un número con máximo …' to be 'Escribe la capacidad en kWp.' // Object.is equality
+
+Expected: "Escribe la capacidad en kWp."
+Received: "La capacidad es un número con máximo 2 decimales."
+
+ ❯ src/features/proyectos/proyectoSchema.test.ts:41:70
+     39|     expect(mensajes({ ...valido, capacidad_kwp: '0' }).capacidad_kwp).…
+     40|     expect(mensajes({ ...valido, capacidad_kwp: '1.234' }).capacidad_k…
+     41|     expect(mensajes({ ...valido, capacidad_kwp: '' }).capacidad_kwp).t…
+       |                                                                      ^
+     42|     expect(mensajes({ ...valido, capacidad_kwp: '10000.01' }).capacida…
+     43|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/features/proyectos/hooks/useCrearProyecto.test.tsx > useCrearProyecto > guarda el mensaje del error de la base y no avisa
+Unknown Error: Asignación no válida: el instalador está inactivo y no puede recibir proyectos.
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed | 6 passed (8)
+      Tests  2 failed | 23 passed (25)
+   Start at  22:57:31
+   Duration  26.93s (environment 47%, setup 23%, import 23%, transform 4%, tests 3%)
+
+[ELIFECYCLE] Test failed. See above for more details.
+(código de salida: 1)
+
+### $ pnpm build
+$ tsc -b && vite build
+vite v8.3.8 building client environment for production...
+transforming...
+✓ 2409 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                              0.42 kB │ gzip:   0.29 kB
+dist/assets/geist-cyrillic-ext-wght-normal-DjL33-gN.woff2    7.42 kB
+dist/assets/geist-vietnamese-wght-normal-6IgcOCM7.woff2      8.00 kB
+dist/assets/geist-cyrillic-wght-normal-BEAKL7Jp.woff2       15.08 kB
+dist/assets/geist-latin-ext-wght-normal-DC-KSUi6.woff2      16.51 kB
+dist/assets/geist-latin-wght-normal-BgDaEnEv.woff2          29.40 kB
+dist/assets/index-8Z5VFIl0.css                              40.56 kB │ gzip:   8.13 kB
+dist/assets/index-xuZ_Qm0O.js                              411.77 kB │ gzip: 130.20 kB
+
+✓ built in 5.45s
+(código de salida: 0)
+
