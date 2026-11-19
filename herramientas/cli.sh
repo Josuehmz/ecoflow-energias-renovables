@@ -3,7 +3,8 @@
 #   bash herramientas/cli.sh 01-version --version
 #   bash herramientas/cli.sh 03-start start -x studio,...
 # Cada archivo lleva fecha, versión, comando y código de salida, sin códigos ANSI y con las claves
-# y la URL de la base con contraseña cambiadas por <redactado> (aunque sean las locales por defecto).
+# y la URL de la base con contraseña cambiadas por <redactado> (aunque sean las locales por defecto),
+# y la carpeta del usuario del equipo cambiada por <usuario>.
 set -u
 cd "$(dirname "$0")/.."
 CLI="${SUPABASE_CLI:-D:/Herramientas/supabase/supabase.exe}"
@@ -20,7 +21,8 @@ SALIDA="docs/evidencia/cli/$NOMBRE.txt"
     -e 's/sb_(publishable|secret)_[A-Za-z0-9_-]+/<redactado>/g' \
     -e 's/eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+/<redactado>/g' \
     -e 's#(postgres(ql)?://[^:]+:)[^@]+@#\1<redactado>@#g' \
-    -e 's/((Secret|JWT secret|S3 Access Key|S3 Secret Key|Publishable|Service role key|anon key)[^:]*: *).*/\1<redactado>/I'
+    -e 's/((Secret|JWT secret|S3 Access Key|S3 Secret Key|Publishable|Service role key|anon key)[^:]*: *).*/\1<redactado>/I' \
+    -e 's#([A-Z]:)?[\\/]Users[\\/][^\\/ ]+#<usuario>#g'
   echo "----"
   echo "(código de salida: ${PIPESTATUS[0]})"
 } > "$SALIDA"

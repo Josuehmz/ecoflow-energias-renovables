@@ -1,4 +1,4 @@
-Fecha: 2026-11-18 22:32:50 -0500
+Fecha: 2026-11-19 00:01:38 -0500
 CLI: supabase 2.122.0
 Comando: supabase db reset --agent no
 ----

@@ -1,4 +1,4 @@
-Fecha: 2026-11-18 22:34:09 -0500
+Fecha: 2026-11-19 00:03:17 -0500
 CLI: supabase 2.122.0
 Comando: supabase migration list --local --agent no
 ----
