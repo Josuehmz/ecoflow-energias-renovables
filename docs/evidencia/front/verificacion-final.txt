@@ -1,4 +1,4 @@
-Fecha: 2026-11-18 23:45:51 -0500
+Fecha: 2026-11-19 00:15:08 -0500
 Versión verificada: final
 
 ### $ pnpm typecheck
@@ -17,11 +17,11 @@ $ vitest run
 
  Test Files  9 passed (9)
       Tests  28 passed (28)
-   Start at  23:46:10
-   Duration  28.82s (environment 45%, import 25%, setup 22%, transform 4%, tests 3%, worker 1%)
+   Start at  00:15:24
+   Duration  30.98s (environment 54%, setup 21%, import 20%, tests 3%, transform 2%)
 
-    Isolate  9 workers spawned · ~8.97s startup each (spawn + environment, per file)
-             at least ~2.56s faster with isolate: false — reuses workers across files instead of one per file
+    Isolate  9 workers spawned · ~10.54s startup each (spawn + environment, per file)
+             at least ~3.01s faster with isolate: false — reuses workers across files instead of one per file
 
 (código de salida: 0)
 
@@ -41,6 +41,6 @@ dist/assets/geist-latin-wght-normal-BgDaEnEv.woff2          29.40 kB
 dist/assets/index-tKmFAZAp.css                              42.32 kB │ gzip:   8.40 kB
 dist/assets/index-B0LEHCbQ.js                              412.11 kB │ gzip: 130.31 kB
 
-✓ built in 6.21s
+✓ built in 7.29s
 (código de salida: 0)
 

@@ -1,4 +1,4 @@
-Fecha: 2026-11-18 23:08:43 -0500
+Fecha: 2026-11-19 00:14:35 -0500
 Comando: supabase db reset && bash herramientas/con-supabase-local.sh node herramientas/probar-rls-api.mjs
 ----
 ok 1 - anon no lee proyectos  [42501]
