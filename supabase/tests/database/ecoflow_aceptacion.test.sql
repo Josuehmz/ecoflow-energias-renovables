@@ -1,6 +1,6 @@
 -- =====================================================================
 -- EcoFlow · pruebas de aceptación de la base (pgTAP)
--- Fuente: docs/ESPECIFICACION-TECNICA.md §6 (CA-01 … CA-17; 65 pruebas). Escritas ANTES que el SQL del esquema:
+-- Fuente: docs/ESPECIFICACION-TECNICA.md §6 (CA-01 … CA-17; 66 pruebas). Escritas ANTES que el SQL del esquema:
 -- son el criterio con el que se evaluó cada versión que propuso la IA (docs/PROMPTS.md).
 -- Correr:  supabase db reset && supabase test db
 --
@@ -15,7 +15,7 @@
 -- =====================================================================
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(65);
+select plan(66);
 
 -- Ayuda: ¿la columna es la primera de algún índice de la tabla?
 create function pg_temp.tiene_indice(tabla regclass, columna name) returns boolean
@@ -256,6 +256,10 @@ select lives_ok(
   $$update public.instaladores set especialidad = 'Instalación residencial y comercial'
      where id = 'b2222222-2222-4222-8222-222222222222'$$,
   '§3 la coordinadora edita al personal');
+select throws_ok(
+  $$update public.instaladores set user_id = 'a4444444-4444-4444-8444-444444444444'
+     where id = 'b2222222-2222-4222-8222-222222222222'$$,
+  '42501', null, 'S-2 ni la coordinadora re-enlaza una ficha con otra cuenta (user_id sin UPDATE)');
 
 -- CHECKs (CA-11), como coordinadora para que la RLS no tape el error.
 select throws_ok(
