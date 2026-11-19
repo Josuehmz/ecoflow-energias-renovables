@@ -462,8 +462,11 @@ grant delete on table public.instaladores to authenticated;
 grant select on table public.proyectos to authenticated;
 -- INSERT por columna (I-3): todo lo editable menos id, created_by, created_at y
 -- updated_at; created_by sale del DEFAULT privado.mi_instalador_id().
+-- T-6 (ajuste tras la auditoría de tipos del prompt 03): tampoco `estado`. La máquina de estados
+-- solo vigila los UPDATE; si el cliente pudiera elegir el estado al crear, un proyecto «naciendo»
+-- completado sería el salto pendiente → completado que T-2 prohíbe. Nace con el DEFAULT pendiente.
 grant insert (nombre, cliente, direccion, ciudad, capacidad_kwp, numero_paneles,
-              fecha_inicio, fecha_fin, estado, instalador_id)
+              fecha_inicio, fecha_fin, instalador_id)
   on table public.proyectos to authenticated;
 -- UPDATE por columna (I-3): las mismas columnas; created_by no es editable por
 -- nadie con sesión, ni siquiera el coordinador. Que el asignado solo toque

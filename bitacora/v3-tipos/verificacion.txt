@@ -1,0 +1,49 @@
+Fecha: 2026-11-18 22:45:23 -0500
+v3 copiada en src/types/ (dominio.ts, proyectoSchema.ts) junto a database.types.ts de la CLI
+
+### $ pnpm typecheck
+$ tsc -b --noEmit
+(código de salida: 0)
+
+### $ pnpm lint
+$ oxlint --deny-warnings
+(código de salida: 0)
+
+### Mutación: numero_paneles se deja como texto (sin transform/pipe a number) → la guarda debe fallar
+$ pnpm typecheck
+$ tsc -b --noEmit
+src/types/proyectoSchema.ts(63,78): error TS2322: Type '{ nombre: string; cliente: string; direccion: string; ciudad: string; capacidad_kwp: number; numero_paneles: string; fecha_inicio: string; fecha_fin: string | null; instalador_id: string | null; }' is not assignable to type 'NuevoProyecto'.
+  Types of property '"numero_paneles"' are incompatible.
+    Type 'string' is not assignable to type 'number'.
+[ELIFECYCLE] Command failed with exit code 1.
+(código de salida: 1)
+
+### Hallazgo probado en la base ANTES de corregir: prueba 67 (T-6) contra la migración vigente
+$ supabase test db
+Connecting to local database...
+<usuario>/OneDrive/Documentos/Repositorios/universidad/ecoflow-energias-renovables/supabase/tests/database/ecoflow_aceptacion.test.sql .. 
+# Failed test 46: "T-6 ni la coordinadora crea un proyecto en un estado distinto de pendiente"
+#       caught: no exception
+#       wanted: 42501
+# Looks like you failed 1 test of 67
+Failed 1/67 subtests 
+
+Test Summary Report
+-------------------
+<usuario>/OneDrive/Documentos/Repositorios/universidad/ecoflow-energias-renovables/supabase/tests/database/ecoflow_aceptacion.test.sql (Wstat: 0 Tests: 67 Failed: 1)
+  Failed test:  46
+Files=1, Tests=67,  2 wallclock secs ( 0.19 usr  0.06 sys +  0.09 cusr  0.11 csys =  0.45 CPU)
+Result: FAIL
+error running container: exit 1
+Try rerunning the command with --debug to troubleshoot the error.
+(código de salida: 1)
+
+### Después de quitar `estado` del GRANT de INSERT (migración final): db reset + test db
+All tests successful.
+Files=1, Tests=67,  1 wallclock secs ( 0.14 usr  0.12 sys +  0.08 cusr  0.07 csys =  0.41 CPU)
+Result: PASS
+
+### $ pnpm gen:types:check (los GRANT no cambian los tipos generados)
+$ node herramientas/gen-types.mjs --check
+src/types/database.types.ts coincide con el esquema local (sin diferencias).
+(código de salida: 0)

@@ -1,4 +1,4 @@
-Fecha: 2026-11-18 22:29:27 -0500
+Fecha: 2026-11-18 22:47:16 -0500
 Versión probada: final  →  supabase/migrations/20261119025015_esquema_ecoflow.sql
 
 ### $ supabase db reset
@@ -17,13 +17,13 @@ Connecting to local database...
 psql:<usuario>/OneDrive/Documentos/Repositorios/universidad/ecoflow-energias-renovables/supabase/tests/database/ecoflow_aceptacion.test.sql:17: NOTICE:  extension "pgtap" already exists, skipping
 <usuario>/OneDrive/Documentos/Repositorios/universidad/ecoflow-energias-renovables/supabase/tests/database/ecoflow_aceptacion.test.sql .. ok
 All tests successful.
-Files=1, Tests=66,  2 wallclock secs ( 0.19 usr  0.06 sys +  0.06 cusr  0.07 csys =  0.38 CPU)
+Files=1, Tests=67,  1 wallclock secs ( 0.14 usr  0.12 sys +  0.08 cusr  0.07 csys =  0.41 CPU)
 Result: PASS
 (código de salida: 0)
 
 ### Lista TAP completa (el mismo archivo por psql dentro del contenedor de la base)
 # supabase/tests/database/ecoflow_aceptacion.test.sql
-1..66
+1..67
 ok 1 - CA-01 RLS habilitada y FORZADA en las 4 tablas
 ok 2 - CA-02 anon no tiene ningún privilegio sobre las tablas ni la vista
 ok 3 - S-2 authenticated no puede hacer TRUNCATE (RLS no lo filtra)
@@ -69,24 +69,25 @@ ok 42 - CA-14 el resumen de la coordinadora cuenta todo
 ok 43 - CA-10 la coordinadora crea un proyecto asignado a A
 ok 44 - CA-10 created_by lo puso la base (la coordinadora)
 ok 45 - §2.3 un proyecto nuevo nace pendiente
-ok 46 - I-3 ni la coordinadora puede fijar created_by desde el cliente
-ok 47 - CA-15 no se asigna a personal inactivo
-ok 48 - CA-15 no se asigna a un coordinador
-ok 49 - CA-08 la coordinadora sí reabre un completado (retroceso)
-ok 50 - CA-09 tampoco la coordinadora salta pendiente → completado
-ok 51 - I-1 en_progreso sin instalador viola el CHECK
-ok 52 - §3 la coordinadora edita al personal
-ok 53 - S-2 ni la coordinadora re-enlaza una ficha con otra cuenta (user_id sin UPDATE)
-ok 54 - CA-11 capacidad_kwp = 0 rechazada
-ok 55 - CA-11 numero_paneles negativo rechazado
-ok 56 - CA-11 fecha_fin anterior a fecha_inicio rechazada
-ok 57 - CA-11 cantidad 0 rechazada
-ok 58 - CA-11 costo_unitario negativo rechazado
-ok 59 - CA-11 stock negativo rechazado
-ok 60 - CA-12 la coordinadora borra el proyecto 6
-ok 61 - S-4 el inactivo no ve proyectos, ni su historia
-ok 62 - CA-14 el resumen trae los 3 estados aunque todos estén en 0
-ok 63 - CA-12 borrar el proyecto 6 borró sus consumos (CASCADE)
-ok 64 - CA-12 no se borra a un instalador con proyectos (RESTRICT)
-ok 65 - CA-12 tampoco su cuenta: la cascada a instaladores choca con el RESTRICT
-ok 66 - CA-12 no se borra un material en uso (RESTRICT)
+ok 46 - T-6 ni la coordinadora crea un proyecto en un estado distinto de pendiente
+ok 47 - I-3 ni la coordinadora puede fijar created_by desde el cliente
+ok 48 - CA-15 no se asigna a personal inactivo
+ok 49 - CA-15 no se asigna a un coordinador
+ok 50 - CA-08 la coordinadora sí reabre un completado (retroceso)
+ok 51 - CA-09 tampoco la coordinadora salta pendiente → completado
+ok 52 - I-1 en_progreso sin instalador viola el CHECK
+ok 53 - §3 la coordinadora edita al personal
+ok 54 - S-2 ni la coordinadora re-enlaza una ficha con otra cuenta (user_id sin UPDATE)
+ok 55 - CA-11 capacidad_kwp = 0 rechazada
+ok 56 - CA-11 numero_paneles negativo rechazado
+ok 57 - CA-11 fecha_fin anterior a fecha_inicio rechazada
+ok 58 - CA-11 cantidad 0 rechazada
+ok 59 - CA-11 costo_unitario negativo rechazado
+ok 60 - CA-11 stock negativo rechazado
+ok 61 - CA-12 la coordinadora borra el proyecto 6
+ok 62 - S-4 el inactivo no ve proyectos, ni su historia
+ok 63 - CA-14 el resumen trae los 3 estados aunque todos estén en 0
+ok 64 - CA-12 borrar el proyecto 6 borró sus consumos (CASCADE)
+ok 65 - CA-12 no se borra a un instalador con proyectos (RESTRICT)
+ok 66 - CA-12 tampoco su cuenta: la cascada a instaladores choca con el RESTRICT
+ok 67 - CA-12 no se borra un material en uso (RESTRICT)

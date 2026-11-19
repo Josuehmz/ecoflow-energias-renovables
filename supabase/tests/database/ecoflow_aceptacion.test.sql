@@ -1,6 +1,6 @@
 -- =====================================================================
 -- EcoFlow · pruebas de aceptación de la base (pgTAP)
--- Fuente: docs/ESPECIFICACION-TECNICA.md §6 (CA-01 … CA-17; 66 pruebas). Escritas ANTES que el SQL del esquema:
+-- Fuente: docs/ESPECIFICACION-TECNICA.md §6 (CA-01 … CA-17; 67 pruebas). Escritas ANTES que el SQL del esquema:
 -- son el criterio con el que se evaluó cada versión que propuso la IA (docs/PROMPTS.md).
 -- Correr:  supabase db reset && supabase test db
 --
@@ -15,7 +15,7 @@
 -- =====================================================================
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(66);
+select plan(67);
 
 -- Ayuda: ¿la columna es la primera de algún índice de la tabla?
 create function pg_temp.tiene_indice(tabla regclass, columna name) returns boolean
@@ -229,6 +229,13 @@ select is(
 select is(
   (select estado::text from public.proyectos where nombre = 'Parqueadero Solar Centro'),
   'pendiente', '§2.3 un proyecto nuevo nace pendiente');
+-- Añadida por el hallazgo de la auditoría de tipos (prompt 03): la máquina de estados solo vigilaba
+-- los UPDATE, así que crear un proyecto ya «completado» era un salto pendiente → completado (T-2).
+select throws_ok(
+  $$insert into public.proyectos (nombre, cliente, direccion, ciudad, capacidad_kwp, numero_paneles, fecha_inicio, estado, instalador_id)
+    values ('Nace completado', 'Cliente X', 'Calle 1 # 2-3', 'Bogotá', 5, 10, '2027-01-01', 'completado',
+            'b2222222-2222-4222-8222-222222222222')$$,
+  '42501', null, 'T-6 ni la coordinadora crea un proyecto en un estado distinto de pendiente');
 select throws_ok(
   $$insert into public.proyectos (nombre, cliente, direccion, ciudad, capacidad_kwp, numero_paneles, fecha_inicio, created_by)
     values ('Falsificado', 'Cliente X', 'Calle 1 # 2-3', 'Bogotá', 5, 10, '2027-01-01',
