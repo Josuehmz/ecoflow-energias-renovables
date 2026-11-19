@@ -29,3 +29,6 @@ dist-ssr
 !.env.example
 dist-medicion
 dist-local
+
+# Video de la demo (se entrega aparte, fuera del repo)
+demo/salida/
