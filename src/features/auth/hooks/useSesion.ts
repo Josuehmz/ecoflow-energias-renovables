@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { escucharSesion, estadoConfiguracion, type SesionUsuario } from '@/services/authService'
 
+export type { SesionUsuario }
+
 export type EstadoSesion =
   | { tipo: 'sin-configurar'; mensaje: string }
   | { tipo: 'cargando' }

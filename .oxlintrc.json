@@ -9,7 +9,7 @@
   "ignorePatterns": ["bitacora/**", "dist/**", "herramientas/**", "src/types/database.types.ts"],
   "overrides": [
     {
-      "files": ["src/components/**", "src/features/*/components/**", "src/App.tsx"],
+      "files": ["src/components/**", "src/features/*/components/**", "src/features/*/*.tsx", "src/App.tsx"],
       "rules": {
         "no-restricted-imports": [
           "error",
@@ -26,7 +26,7 @@
       }
     },
     {
-      "files": ["src/features/*/hooks/**"],
+      "files": ["src/features/*/hooks/**", "src/hooks/**"],
       "rules": {
         "no-restricted-imports": [
           "error",

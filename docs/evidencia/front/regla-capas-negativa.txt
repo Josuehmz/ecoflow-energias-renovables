@@ -1,0 +1,9 @@
+Fecha: 2026-11-18 23:09:24 -0500
+Prueba negativa de la regla de capas: se agregan a TarjetaProyecto.tsx (componente de presentación)
+  import { cliente } from '@/lib/supabase'  e  import { listarProyectos } from '@/services/proyectosService'
+### $ pnpm lint
+$ oxlint --deny-warnings
+src/features/proyectos/components/TarjetaProyecto.tsx:1:1: error eslint(no-restricted-imports): '@/lib/supabase' import is restricted from being used by a pattern. help: Arquitectura: la UI no usa el cliente de Supabase; usa un hook.
+src/features/proyectos/components/TarjetaProyecto.tsx:2:1: error eslint(no-restricted-imports): '@/services/proyectosService' import is restricted from being used by a pattern. help: Arquitectura: la UI no llama servicios; usa un hook.
+[ELIFECYCLE] Command failed with exit code 1.
+(código de salida: 1)

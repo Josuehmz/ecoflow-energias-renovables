@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { ErrorConReintento } from '@/components/ErrorConReintento'
 import { PantallaCarga } from '@/components/PantallaCarga'
 import { DashboardPage } from '@/features/dashboard/DashboardPage'
-import type { SesionUsuario } from '@/services/authService'
+import type { SesionUsuario } from './hooks/useSesion'
 import { useCerrarSesion } from './hooks/useCerrarSesion'
 import { usePerfil } from './hooks/usePerfil'
 

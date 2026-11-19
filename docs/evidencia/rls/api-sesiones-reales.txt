@@ -1,0 +1,29 @@
+Fecha: 2026-11-18 23:08:43 -0500
+Comando: supabase db reset && bash herramientas/con-supabase-local.sh node herramientas/probar-rls-api.mjs
+----
+ok 1 - anon no lee proyectos  [42501]
+ok 2 - anon no lee materiales  [42501]
+# sesión real de andres.instalador@ecoflow.test (user a2222222-2222-4222-8222-222222222222)
+ok 3 - A ve exactamente 3 proyectos  [Techo solar Casa Rivera | Autoconsumo Panadería La Espiga | Cubierta Colegio San Mateo]
+ok 4 - A no ve el proyecto 4 de B (lista vacía, sin error)
+ok 5 - A no modifica el proyecto de B (0 filas)
+ok 6 - A no crea proyectos  [Solo un coordinador puede crear proyectos]
+ok 7 - A avanza su proyecto 3 a en_progreso
+ok 8 - A no retrocede en_progreso → pendiente  [Transición no permitida: de «en_progreso» a «pendiente». Solo un coordinador puede retroceder el estado de un proyecto (reabrir o reprogramar).]
+ok 9 - A no cambia el cliente  [Solo un coordinador puede modificar datos del proyecto distintos del estado]
+ok 10 - resumen de A solo con lo suyo  [{"pendiente":0,"en_progreso":2,"completado":1}]
+# sesión real de beatriz.instaladora@ecoflow.test (user a3333333-3333-4333-8333-333333333333)
+ok 11 - B ve exactamente 4 proyectos
+ok 12 - B no salta pendiente → completado  [Transición no permitida: de «pendiente» a «completado». Una obra no puede completarse sin haber empezado; primero debe pasar por «en_progreso».]
+ok 13 - B ve solo los 5 consumos de sus proyectos
+# sesión real de laura.coordinadora@ecoflow.test (user a1111111-1111-4111-8111-111111111111)
+ok 14 - la coordinadora ve los 9 proyectos
+ok 15 - la coordinadora crea; nace pendiente y created_by lo pone la base  [{"estado":"pendiente","created_by":"b1111111-1111-4111-8111-111111111111"}]
+ok 16 - ni la coordinadora crea un proyecto ya completado (T-6)  [permission denied for table proyectos]
+ok 17 - la coordinadora reabre un completado (retroceso)
+ok 18 - CHECK: capacidad 0 rechazada por la base  [new row for relation "proyectos" violates check constraint "proyectos_capacidad_kwp_rango"]
+# sesión real de carlos.inactivo@ecoflow.test (user a4444444-4444-4444-8444-444444444444)
+ok 19 - el instalador inactivo no ve proyectos (ni su historia)
+
+19 de 19 comprobaciones correctas
+(código de salida: 0)
